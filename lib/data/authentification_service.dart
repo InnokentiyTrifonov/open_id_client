@@ -84,9 +84,7 @@ class AuthentificationService implements AuthentificationInterface {
 
   @override
   Future<void> startPeriodicRefreshToken() async {
-    final accessTokenExpirationDateTime = await _secureStorageService.getAccessTokenExpirationDateTime();
-    if (accessTokenExpirationDateTime != null &&
-        accessTokenExpirationDateTime.difference(DateTime.now()) < const Duration(minutes: 10)) {
+    _timer = Timer.periodic(const Duration(minutes: 10), (Timer t) async {
       final refreshToken = await _secureStorageService.getRefreshToken();
       final result = await refresh(refreshToken: refreshToken);
 
@@ -96,16 +94,6 @@ class AuthentificationService implements AuthentificationInterface {
       await _secureStorageService.setIdToken(result.refreshToken);
 
       log('accessToken was updated');
-    }
-
-    log('next update will after 10 minutes');
-
-    _timer = Timer.periodic(const Duration(minutes: 10), (Timer t) async {
-      final refreshToken = await _secureStorageService.getRefreshToken();
-      final result = await refresh(refreshToken: refreshToken);
-
-      await _secureStorageService.setAccessToken(result.accessToken);
-      log('accessToken was updated next updating after 50 minutes');
     });
   }
 
