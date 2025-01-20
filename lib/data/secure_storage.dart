@@ -47,8 +47,8 @@ class SecureStorageService implements SecureStorageInterface {
   @override
   Future<DateTime?> getAccessTokenExpirationDateTime() async {
     final result = await _flutterSecureStorage.read(key: _accessTokenExpirationDateTimeKey);
-    if (result == null) result;
-    return DateTime.parse(result!);
+    if (result == null) return null;
+    return DateTime.parse(result);
   }
 
   @override
